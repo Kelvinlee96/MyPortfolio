@@ -300,6 +300,8 @@ const Portfolio = () => {
                 src="/images/ProfilePic.jpg"
                 alt="Profile"
                 className="w-full max-w-md mx-auto rounded-lg shadow-lg"
+                width={400}
+                height={200}
               />
             </div>
             <div>
@@ -330,7 +332,7 @@ const Portfolio = () => {
       </section>
 
       {/* Projects */}
-       <section id="projects" className="py-20" style={{ backgroundColor: '#f6ede5' }}>
+       <section id="projects" className="py-20" style={{ backgroundColor: '#f0eee6' }}>
         <div className="max-w-6xl mx-auto px-4">
           <div className="text-center mb-16">
             <h2 className="text-4xl font-bold text-gray-800 mb-4">Projects</h2>
@@ -363,6 +365,8 @@ const Portfolio = () => {
                     src={project.image}
                     alt={project.title}
                     className="w-full h-48 object-cover"
+                    width={400}
+                    height={200}
                     unoptimized
                   />
                   <div className="p-6">
@@ -404,7 +408,7 @@ const Portfolio = () => {
 
 
       {/* Tech Stack */}
-      <section id="tech-stack" className="py-20" style={{ backgroundColor: '#ffffff' }}>
+      <section id="tech-stack" className="py-20" style={{ backgroundColor: '#f0eee6' }}>
         <div className="max-w-6xl mx-auto px-4">
           <div className="text-center mb-16">
             <h2 className="text-4xl font-bold text-gray-800 mb-4">Tech Stack</h2>
