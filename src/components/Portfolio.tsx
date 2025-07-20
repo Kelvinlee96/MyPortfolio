@@ -3,6 +3,45 @@
 import React, { useState, useEffect } from 'react';
 import { ChevronDown, Mail, Phone, MapPin, Download, Github, Linkedin, ExternalLink, Code, Database, Globe, Server } from 'lucide-react';
 
+// TypeScript interfaces
+interface Project {
+  title: string;
+  description: string;
+  technologies: string[];
+  githubUrl: string;
+  liveUrl: string;
+  image: string;
+}
+
+interface TechStackItem {
+  name: string;
+  icon: any;
+  color: string;
+}
+
+interface Experience {
+  title: string;
+  company: string;
+  period: string;
+  technologies: string[];
+  description: string;
+  achievements: string[];
+}
+
+interface Education {
+  title: string;
+  institution: string;
+  period: string;
+//   description: string;
+}
+
+interface Certification {
+  title: string;
+  institution: string;
+  period: string;
+  description: string;
+}
+
 // Extend Window interface for Credly
 declare global {
   interface Window {
@@ -21,9 +60,16 @@ const Portfolio = () => {
     if (element) {
       element.scrollIntoView({ behavior: 'smooth' });
       setActiveSection(sectionId);
+      
+      // Force badge re-render when navigating to certifications
+      if (sectionId === 'certifications') {
+        setTimeout(() => {
+          setBadgeKey(prev => prev + 1);
+        }, 500);
+      }
     }
   };
-
+  
   const handleResumeDownload = () => {
     // In a real implementation, this would download your actual resume
     // alert('Resume download would be implemented here');
@@ -33,19 +79,19 @@ const Portfolio = () => {
     link.click();
   };
 
-  const techStack = [
+  const techStack: TechStackItem[] = [
     { name: 'JavaScript', icon: Code, color: 'bg-amber-100 text-amber-800' },
     { name: 'React', icon: Code, color: 'bg-orange-100 text-orange-800' },
     { name: 'Next.js', icon: Globe, color: 'bg-gray-100 text-gray-800' },
     { name: 'Node.js', icon: Server, color: 'bg-green-100 text-green-800' },
-    { name: '.NET', icon: Code, color: 'bg-orange-100 text-orange-800' },
-    // { name: 'Python', icon: Code, color: 'bg-red-100 text-red-800' },
-    // { name: 'MongoDB', icon: Database, color: 'bg-green-100 text-green-800' },
+    { name: 'Python', icon: Code, color: 'bg-red-100 text-red-800' },
+    { name: 'MongoDB', icon: Database, color: 'bg-green-100 text-green-800' },
     { name: 'PostgreSQL', icon: Database, color: 'bg-indigo-100 text-indigo-800' },
     { name: 'AWS', icon: Server, color: 'bg-orange-100 text-orange-800' },
   ];
 
-  const projects = [
+
+  const projects: Project[] = [
     // {
     //   title: 'E-Commerce Platform',
     //   description: 'Full-stack e-commerce solution with React, Node.js, and MongoDB. Features include user authentication, payment processing, and admin dashboard.',
@@ -72,7 +118,7 @@ const Portfolio = () => {
     // }
   ];
 
-  const experiences = [
+  const experiences: Experience[] = [
     {
       title: 'Software Engineer / Business Analyst',
       company: 'Secur Solution Group Pte Ltd',
@@ -109,7 +155,7 @@ const Portfolio = () => {
     }
   ];
 
-  const education = [
+  const education: Education[] = [
     {
       title: 'Master of Cybersecurity',
       institution: 'University Teknology Malaysia (UTM)',
@@ -124,7 +170,7 @@ const Portfolio = () => {
     },
   ];
 
-  const certifications = [
+  const certifications: Certification[] = [
     {
       title: 'AWS Certified Cloud Practitioner',
       institution: 'AWS',
@@ -132,7 +178,7 @@ const Portfolio = () => {
       description: 'Practitioner certification in cloud services.'
     },
     {
-        title: <a href="https://academy.semgrep.dev/certificates/4zkk3ajsbf">Semgrep 101 🔗</a>,
+        title: "Semgrep 101 🔗",
         institution: 'Semgrep',
         period: '2025',
         description: 'Fundamentals of static code analysis, software supply chain security, and secret scanning with Semgrep in this course.'
@@ -156,7 +202,7 @@ const Portfolio = () => {
   }, []);
 
   // Re-trigger badge loading when badgeKey changes
-  useEffect(() => {
+   useEffect(() => {
     if (badgeKey > 0) {
       setTimeout(() => {
         const script = document.createElement('script');
