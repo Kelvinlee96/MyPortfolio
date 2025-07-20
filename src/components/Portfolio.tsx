@@ -300,7 +300,6 @@ const Portfolio = () => {
                 src="/images/ProfilePic.jpg"
                 alt="Profile"
                 className="w-full max-w-md mx-auto rounded-lg shadow-lg"
-                unoptimized
               />
             </div>
             <div>
