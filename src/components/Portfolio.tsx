@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import Image from 'next/image';
 import { ChevronDown, Mail, Phone, MapPin, Download, Github, Linkedin, ExternalLink, Code, Database, Globe, Server } from 'lucide-react';
 
 // TypeScript interfaces
@@ -15,7 +16,7 @@ interface Project {
 
 interface TechStackItem {
   name: string;
-  icon: any;
+  icon: React.ComponentType<{ className?: string }>;
   color: string;
 }
 
@@ -69,7 +70,7 @@ const Portfolio = () => {
       }
     }
   };
-  
+
   const handleResumeDownload = () => {
     // In a real implementation, this would download your actual resume
     // alert('Resume download would be implemented here');
@@ -84,8 +85,8 @@ const Portfolio = () => {
     { name: 'React', icon: Code, color: 'bg-orange-100 text-orange-800' },
     { name: 'Next.js', icon: Globe, color: 'bg-gray-100 text-gray-800' },
     { name: 'Node.js', icon: Server, color: 'bg-green-100 text-green-800' },
-    { name: 'Python', icon: Code, color: 'bg-red-100 text-red-800' },
-    { name: 'MongoDB', icon: Database, color: 'bg-green-100 text-green-800' },
+    // { name: 'Python', icon: Code, color: 'bg-red-100 text-red-800' },
+    // { name: 'MongoDB', icon: Database, color: 'bg-green-100 text-green-800' },
     { name: 'PostgreSQL', icon: Database, color: 'bg-indigo-100 text-indigo-800' },
     { name: 'AWS', icon: Server, color: 'bg-orange-100 text-orange-800' },
   ];
@@ -254,7 +255,7 @@ const Portfolio = () => {
               👋
             </div>
             <h1 className="text-5xl md:text-6xl font-bold mb-6">
-              Hello, I'm <span className="text-amber-200">Lee Qin Wen</span>
+              Hello, I&apos;m <span className="text-amber-200">Lee Qin Wen</span>
             </h1>
             <p className="text-xl md:text-2xl mb-8 text-orange-100">
               Software Engineer & Cyber Enthusiast
@@ -294,11 +295,12 @@ const Portfolio = () => {
           </div>
           <div className="grid md:grid-cols-2 gap-12 items-center">
             <div>
-              <img
+              <Image
                 // src="https://via.placeholder.com/400x400/3B82F6/ffffff?text=Your+Photo"
-                src='/images/ProfilePic.jpg'
+                src="/images/ProfilePic.jpg"
                 alt="Profile"
                 className="w-full max-w-md mx-auto rounded-lg shadow-lg"
+                unoptimized
               />
             </div>
             <div>
@@ -310,7 +312,7 @@ const Portfolio = () => {
                 passion for creating seamless digital experiences.
               </p>
               <p className="text-gray-600 mb-6 leading-relaxed">
-                I'm always eager to learn new technologies. I believe in writing clean, maintainable code and creating 
+                I&apos;m always eager to learn new technologies. I believe in writing clean, maintainable code and creating 
                 applications that provide real value to users.
                 Alongsdie my software development work, I have passion for Cybersecurity and actively self-study to build
                 practical skills and expand my expertise
@@ -358,10 +360,11 @@ const Portfolio = () => {
                 <div key={index} className={`rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow ${
                   projects.length === 1 ? 'w-full max-w-md' : 'w-full'
                 }`} style={{ backgroundColor: '#ffffff' }}>
-                  <img
+                  <Image
                     src={project.image}
                     alt={project.title}
                     className="w-full h-48 object-cover"
+                    unoptimized
                   />
                   <div className="p-6">
                     <h3 className="text-xl font-semibold text-gray-800 mb-3">{project.title}</h3>
