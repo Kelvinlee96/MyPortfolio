@@ -7,8 +7,8 @@ const nextConfig: NextConfig = {
     unoptimized: true
   },
   // Uncomment these lines if hosting on a subdomain (like username.github.io/portfolio)
-  basePath: '/MyPortfolio',
-  assetPrefix: '/MyPortfolio/',
+  // basePath: '/MyPortfolio',
+  // assetPrefix: '/MyPortfolio/',
 };
 
 export default nextConfig;
