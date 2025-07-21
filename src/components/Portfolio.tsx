@@ -85,6 +85,7 @@ const Portfolio = () => {
     { name: 'React', icon: Code, color: 'bg-orange-100 text-orange-800' },
     { name: 'Next.js', icon: Globe, color: 'bg-gray-100 text-gray-800' },
     { name: 'Node.js', icon: Server, color: 'bg-green-100 text-green-800' },
+      { name: '.NET', icon: Globe, color: 'bg-gray-100 text-gray-800' },
     // { name: 'Python', icon: Code, color: 'bg-red-100 text-red-800' },
     // { name: 'MongoDB', icon: Database, color: 'bg-green-100 text-green-800' },
     { name: 'PostgreSQL', icon: Database, color: 'bg-indigo-100 text-indigo-800' },
