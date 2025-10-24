@@ -4,6 +4,9 @@ import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { ChevronDown, Mail, Phone, MapPin, Download, Github, Linkedin, ExternalLink, Code, Database, Globe, Server } from 'lucide-react';
 
+// Base path for GitHub Pages deployment
+const BASE_PATH = process.env.NODE_ENV === 'production' ? '/MyPortfolio' : '';
+
 // TypeScript interfaces
 interface Project {
   title: string;
@@ -75,7 +78,7 @@ const Portfolio = () => {
     // In a real implementation, this would download your actual resume
     // alert('Resume download would be implemented here');
     const link = document.createElement('a');
-    link.href = '/LeeQinWen_Resume_v3.pdf';
+    link.href = `${BASE_PATH}/LeeQinWen_Resume_v3.pdf`;
     link.download = 'LeeQinWen_Resume.pdf';
     link.click();
   };
@@ -298,7 +301,7 @@ const Portfolio = () => {
             <div>
               <Image
                 // src="https://via.placeholder.com/400x400/3B82F6/ffffff?text=Your+Photo"
-                src="/images/ProfilePic.jpg"
+                src={`${BASE_PATH}/images/ProfilePic.jpg`}
                 alt="Profile"
                 className="w-full max-w-md mx-auto rounded-lg shadow-lg"
                 width={400}
