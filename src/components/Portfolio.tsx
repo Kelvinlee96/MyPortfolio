@@ -64,12 +64,16 @@ const Portfolio = () => {
     if (element) {
       element.scrollIntoView({ behavior: 'smooth' });
       setActiveSection(sectionId);
-      
-      // Force badge re-render when navigating to certifications
+
+      // Force badge re-initialization when navigating to certifications
       if (sectionId === 'certifications') {
         setTimeout(() => {
           setBadgeKey(prev => prev + 1);
-        }, 500);
+          // Also try to init immediately in case the utility is already loaded
+          if (window.CrederlyUtil && typeof window.CrederlyUtil.init === 'function') {
+            window.CrederlyUtil.init();
+          }
+        }, 600);
       }
     }
   };
@@ -190,38 +194,30 @@ const Portfolio = () => {
     }
   ];
 
-  // Load Credly badge script
+  // Load Credly badge script once and keep it loaded
   useEffect(() => {
-    const script = document.createElement('script');
-    script.src = '//cdn.credly.com/assets/utilities/embed.js';
-    script.async = true;
-    document.body.appendChild(script);
+    // Check if script already exists
+    const existingScript = document.querySelector('script[src*="credly.com"]');
+    if (!existingScript) {
+      const script = document.createElement('script');
+      script.src = '//cdn.credly.com/assets/utilities/embed.js';
+      script.async = true;
+      script.id = 'credly-embed-script';
+      document.body.appendChild(script);
+    }
 
-    return () => {
-      // Cleanup script on unmount
-      const existingScript = document.querySelector('script[src*="credly.com"]');
-      if (existingScript && document.body.contains(existingScript)) {
-        document.body.removeChild(existingScript);
-      }
-    };
+    // Don't remove the script - keep it loaded for the lifetime of the page
   }, []);
 
-  // Re-trigger badge loading when badgeKey changes
-   useEffect(() => {
+  // Re-trigger badge initialization when badgeKey changes
+  useEffect(() => {
     if (badgeKey > 0) {
       setTimeout(() => {
-        const script = document.createElement('script');
-        script.src = '//cdn.credly.com/assets/utilities/embed.js';
-        script.async = true;
-        document.body.appendChild(script);
-        
-        // Remove the temporary script after a short delay
-        setTimeout(() => {
-          if (document.body.contains(script)) {
-            document.body.removeChild(script);
-          }
-        }, 2000);
-      }, 100);
+        // Trigger Credly to re-scan the page for badges
+        if (window.CrederlyUtil && typeof window.CrederlyUtil.init === 'function') {
+          window.CrederlyUtil.init();
+        }
+      }, 300);
     }
   }, [badgeKey]);
 
