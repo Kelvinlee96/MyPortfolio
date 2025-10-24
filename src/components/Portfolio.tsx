@@ -302,7 +302,8 @@ const Portfolio = () => {
                 alt="Profile"
                 className="w-full max-w-md mx-auto rounded-lg shadow-lg"
                 width={400}
-                height={200}
+                height={400}
+                unoptimized
               />
             </div>
             <div>
