@@ -57,24 +57,12 @@ declare global {
 
 const Portfolio = () => {
   const [activeSection, setActiveSection] = useState('home');
-  const [badgeKey, setBadgeKey] = useState(0);
 
   const scrollToSection = (sectionId: string) => {
     const element = document.getElementById(sectionId);
     if (element) {
       element.scrollIntoView({ behavior: 'smooth' });
       setActiveSection(sectionId);
-
-      // Force badge re-initialization when navigating to certifications
-      if (sectionId === 'certifications') {
-        setTimeout(() => {
-          setBadgeKey(prev => prev + 1);
-          // Also try to init immediately in case the utility is already loaded
-          if (window.CrederlyUtil && typeof window.CrederlyUtil.init === 'function') {
-            window.CrederlyUtil.init();
-          }
-        }, 600);
-      }
     }
   };
 
@@ -194,9 +182,9 @@ const Portfolio = () => {
     }
   ];
 
-  // Load Credly badge script once and keep it loaded
+  // Load Credly badge script once on component mount
   useEffect(() => {
-    // Check if script already exists
+    // Check if script already exists to avoid duplicates
     const existingScript = document.querySelector('script[src*="credly.com"]');
     if (!existingScript) {
       const script = document.createElement('script');
@@ -205,21 +193,8 @@ const Portfolio = () => {
       script.id = 'credly-embed-script';
       document.body.appendChild(script);
     }
-
-    // Don't remove the script - keep it loaded for the lifetime of the page
+    // Keep script loaded permanently - no cleanup
   }, []);
-
-  // Re-trigger badge initialization when badgeKey changes
-  useEffect(() => {
-    if (badgeKey > 0) {
-      setTimeout(() => {
-        // Trigger Credly to re-scan the page for badges
-        if (window.CrederlyUtil && typeof window.CrederlyUtil.init === 'function') {
-          window.CrederlyUtil.init();
-        }
-      }, 300);
-    }
-  }, [badgeKey]);
 
   return (
     <div className="min-h-screen" style={{ backgroundColor: '#fbf6f2' }}>
@@ -529,7 +504,7 @@ const Portfolio = () => {
             <h3 className="text-2xl font-semibold text-gray-800 mb-8 text-center">Verified Badges</h3>
             <div className="flex justify-center rounded-lg p-8 shadow-lg" style={{ backgroundColor: '#faf9f5' }}>
               <div
-                key={`credly-badge-${badgeKey}`}
+                id="credly-badge-container"
                 dangerouslySetInnerHTML={{
                   __html: `<div data-iframe-width="150" data-iframe-height="270" data-share-badge-id="993fc5eb-3c2a-4096-8fc9-9da4bd2b3b42" data-share-badge-host="https://www.credly.com"></div>`
                 }}
