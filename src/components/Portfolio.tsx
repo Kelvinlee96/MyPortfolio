@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
 import { ChevronDown, Mail, Phone, MapPin, Download, Github, Linkedin, ExternalLink, Code, Database, Globe, Server } from 'lucide-react';
 
@@ -57,6 +57,7 @@ declare global {
 
 const Portfolio = () => {
   const [activeSection, setActiveSection] = useState('home');
+  const credlyBadgeRef = useRef<HTMLDivElement>(null);
 
   const scrollToSection = (sectionId: string) => {
     const element = document.getElementById(sectionId);
@@ -181,6 +182,13 @@ const Portfolio = () => {
         description: 'Fundamentals of static code analysis, software supply chain security, and secret scanning with Semgrep in this course.'
     }
   ];
+
+  // Set Credly badge HTML once on mount (prevents React from resetting it on re-renders)
+  useEffect(() => {
+    if (credlyBadgeRef.current && !credlyBadgeRef.current.hasChildNodes()) {
+      credlyBadgeRef.current.innerHTML = `<div data-iframe-width="150" data-iframe-height="270" data-share-badge-id="993fc5eb-3c2a-4096-8fc9-9da4bd2b3b42" data-share-badge-host="https://www.credly.com"></div>`;
+    }
+  }, []);
 
   // Load Credly badge script once on component mount
   useEffect(() => {
@@ -504,10 +512,8 @@ const Portfolio = () => {
             <h3 className="text-2xl font-semibold text-gray-800 mb-8 text-center">Verified Badges</h3>
             <div className="flex justify-center rounded-lg p-8 shadow-lg" style={{ backgroundColor: '#faf9f5' }}>
               <div
+                ref={credlyBadgeRef}
                 id="credly-badge-container"
-                dangerouslySetInnerHTML={{
-                  __html: `<div data-iframe-width="150" data-iframe-height="270" data-share-badge-id="993fc5eb-3c2a-4096-8fc9-9da4bd2b3b42" data-share-badge-host="https://www.credly.com"></div>`
-                }}
               />
             </div>
           </div>
