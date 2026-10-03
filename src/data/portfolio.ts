@@ -14,6 +14,7 @@ export const portfolio: SidebarPortfolioTemplateProps = {
   role: 'Software Engineer & Cyber Enthusiast',
   bio: 'I create modern, responsive web applications. Passionate about clean code, user experience, and continuous learning.',
   avatarSrc: `${BASE_PATH}/images/ProfilePic.jpg`,
+  signatureText: 'Kelvin',
   details: [
     { icon: 'pin', label: 'Singapore' },
     { icon: 'briefcase', label: 'Software engineer since 2020' },
@@ -50,10 +51,10 @@ export const portfolio: SidebarPortfolioTemplateProps = {
           start: 'Jul 2024',
           end: 'Present',
           summary:
-            'Primarily Worked with user closely to ensure the daily business workflow is not disrupted. Fixs system bugs to ensure the sytem stablility',
+            'Work closely with users to ensure daily business workflows run without disruption, and fix system bugs to keep the system stable.',
           highlights: [
             'Successfully drove Ministry of Law Case Accounting System project to go-live',
-            'Improved application performance by 30% through revised complex sql queries',
+            'Improved application performance by 30% through revising complex SQL queries',
           ],
           skills: ['.NET', 'MSSQL'],
         },
@@ -71,8 +72,8 @@ export const portfolio: SidebarPortfolioTemplateProps = {
           summary:
             'Developed and maintained existing web applications. Worked closely with clients and developer team to deliver custom solutions.',
           highlights: [
-            'Maintained and enhanced Lab Management Software, implement features which improved functionality and user experience',
-            'Completed 2 data migration for Aptus Medical Center and Singapore Polytechnic project',
+            'Maintained and enhanced Lab Management Software, implementing features that improved functionality and user experience',
+            'Completed 2 data migrations for the Aptus Medical Center and Singapore Polytechnic projects',
             'Led and managed User Acceptance Testing for 2 key Parkway projects',
           ],
           skills: ['React.js', 'PostgreSQL', '.NET'],
@@ -88,10 +89,10 @@ export const portfolio: SidebarPortfolioTemplateProps = {
           type: 'Full-Time',
           start: 'Jul 2020',
           end: 'Apr 2022',
-          summary: 'Built responsive Adtiki Ads Campaign website. Gained experience in modern web development practices.',
+          summary: 'Built the responsive Adtiki Ads Campaign website. Gained experience in modern web development practices.',
           highlights: [
-            'Contributed to implement Uppy uploader into Ads Campaign website',
-            'Contributed to implement Annotorious immage annotation library into Ads Campaign website, which allow user to add comment on the image',
+            'Helped integrate the Uppy uploader into the Ads Campaign website',
+            'Helped integrate the Annotorious image annotation library into the Ads Campaign website, allowing users to comment on images',
           ],
           skills: ['Ember.js', 'PostgreSQL', 'Node.js', 'GraphQL'],
         },

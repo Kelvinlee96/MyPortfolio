@@ -12,6 +12,7 @@
  *  - `cvFileName` to control the downloaded CV's file name
  *  - `onThemeChange` so the page can persist the chosen theme
  *  - `labels.available` for the contact status text
+ *  - `signatureText` to write a legible handwritten signature (Hershey script)
  */
 
 import {
@@ -29,6 +30,7 @@ import {
   type ReactNode,
   type RefObject,
 } from 'react';
+import { ADVANCE_SCALE, SCRIPT_GLYPHS } from './hersheyScript';
 
 /* ------------------------------------------------------------------ types */
 
@@ -134,6 +136,8 @@ export interface SidebarPortfolioTemplateProps {
   avatarSrc?: string;
   avatar?: AvatarColors;
   signature?: boolean;
+  /** Write this text as a legible handwritten signature instead of the abstract scribble */
+  signatureText?: string;
   details?: Detail[];
   socials?: Social[];
   email?: string;
@@ -279,10 +283,57 @@ function smoothPath(pts: [number, number][]): string {
   return d;
 }
 
-function buildSignature(name: string) {
+interface Signature {
+  /** Pen strokes, drawn one after another (separate paths so pathLength dashing works per stroke) */
+  strokes: { d: string; len: number }[];
+  /** viewBox origin / size */
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+  /** on-screen scale (px per viewBox unit) */
+  scale: number;
+}
+
+/** Abstract scribble derived from the first name (the template's original) */
+function buildSignature(name: string): Signature {
   const pts = signaturePoints(name);
   const width = Math.ceil(Math.max(...pts.map((p) => p[0])) + 6);
-  return { d: smoothPath(pts), width };
+  return { strokes: [{ d: smoothPath(pts), len: polylineLength(pts) }], x: 0, y: 0, width, height: 52, scale: 1.25 };
+}
+
+function polylineLength(pts: [number, number][]): number {
+  let len = 0;
+  for (let i = 1; i < pts.length; i++) len += Math.hypot(pts[i][0] - pts[i - 1][0], pts[i][1] - pts[i - 1][1]);
+  return len;
+}
+
+/** Legible handwriting of `text` in the single-stroke Hershey script font */
+function buildScriptSignature(text: string): Signature {
+  const strokes: Signature['strokes'] = [];
+  let x = 0;
+  for (const ch of text) {
+    const glyph = SCRIPT_GLYPHS[ch];
+    if (!glyph) {
+      x += 10; // space / unsupported character
+      continue;
+    }
+    for (const part of glyph.d.split('M').filter(Boolean)) {
+      const pts = part
+        .replace('L', ' ')
+        .trim()
+        .split(/\s+/)
+        .map((pair) => {
+          const [px, py] = pair.split(',').map(Number);
+          return [px + x, py] as [number, number];
+        });
+      // a single point (the dot on an "i") becomes a tiny tick so it still draws
+      if (pts.length === 1) pts.push([pts[0][0] + 0.6, pts[0][1] - 0.6]);
+      strokes.push({ d: smoothPath(pts), len: polylineLength(pts) });
+    }
+    x += glyph.o * ADVANCE_SCALE;
+  }
+  return { strokes, x: -2, y: -1, width: Math.ceil(x) + 4, height: 36, scale: 1.8 };
 }
 
 /* ------------------------------------------------- plain-text CV fallback */
@@ -897,7 +948,7 @@ const CSS = `
 .spt-root[data-motion="on"] .spt-quip{animation:spt-quip 1.7s cubic-bezier(.2,.8,.2,1) both}
 .spt-root[data-motion="off"] .spt-quip{opacity:1;transform:translate(-50%,-70px)}
 .spt-root[data-motion="on"] .spt-art-wrap:active .spt-dev{transform:translateY(1px)}
-@keyframes spt-write{from{stroke-dashoffset:1}to{stroke-dashoffset:0}}
+@keyframes spt-write{0%{stroke-dashoffset:1;visibility:hidden}0.1%{visibility:visible}100%{stroke-dashoffset:0;visibility:visible}}
 @keyframes spt-bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
 @keyframes spt-blink{0%,92%,100%{transform:scaleY(1)}95%{transform:scaleY(.1)}}
 @keyframes spt-led{0%,100%{opacity:1}50%{opacity:.35}}
@@ -942,6 +993,7 @@ export default function SidebarPortfolioTemplate({
   avatarSrc,
   avatar,
   signature = true,
+  signatureText,
   details = DEFAULT_DETAILS,
   socials = DEFAULT_SOCIALS,
   email = 'hello@oliverrowland.dev',
@@ -1015,7 +1067,26 @@ export default function SidebarPortfolioTemplate({
   };
 
   const aboutParas = (Array.isArray(about) ? about : [about]).filter(Boolean);
-  const sig = useMemo(() => buildSignature(name), [name]);
+  const sig = useMemo(
+    () => (signatureText ? buildScriptSignature(signatureText) : buildSignature(name)),
+    [signatureText, name],
+  );
+  // Spread the 2.4s write animation across strokes by length so the pen moves at a steady pace.
+  // A single stroke keeps the stylesheet's original easing.
+  const sigStrokes = useMemo(() => {
+    if (sig.strokes.length < 2) return sig.strokes.map((s) => ({ d: s.d, timing: undefined }));
+    const total = sig.strokes.reduce((n, s) => n + s.len, 0) || 1;
+    let drawn = 0;
+    return sig.strokes.map((s) => {
+      const timing: CSSProperties = {
+        animationDelay: (0.3 + (2.4 * drawn) / total).toFixed(3) + 's',
+        animationDuration: ((2.4 * s.len) / total).toFixed(3) + 's',
+        animationTimingFunction: 'linear',
+      };
+      drawn += s.len;
+      return { d: s.d, timing };
+    });
+  }, [sig]);
 
   const sections = (
     [
@@ -1342,11 +1413,29 @@ export default function SidebarPortfolioTemplate({
                 type="button"
                 className="spt-sig"
                 onClick={() => setSignKey((k) => k + 1)}
-                aria-label={'Signature of ' + name + '. Click to sign again.'}
+                aria-label={'Signature of ' + (signatureText || name) + '. Click to sign again.'}
                 title="Sign again"
               >
-                <svg key={signKey} viewBox={'0 0 ' + sig.width + ' 52'} width={sig.width * 1.25} height={65} aria-hidden="true">
-                  <path d={sig.d} pathLength={1} fill="none" stroke="currentColor" strokeWidth={1.35} strokeLinecap="round" strokeLinejoin="round" />
+                <svg
+                  key={signKey}
+                  viewBox={`${sig.x} ${sig.y} ${sig.width} ${sig.height}`}
+                  width={sig.width * sig.scale}
+                  height={sig.height * sig.scale}
+                  aria-hidden="true"
+                >
+                  {sigStrokes.map((s, i) => (
+                    <path
+                      key={i}
+                      d={s.d}
+                      pathLength={1}
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth={1.7 / sig.scale}
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      style={s.timing}
+                    />
+                  ))}
                 </svg>
               </button>
             )}
